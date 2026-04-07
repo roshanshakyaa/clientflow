@@ -1,16 +1,20 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Field, FieldLabel, Input } from "@base-ui/react";
-import React from "react";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 const LoginPage = () => {
   return (
     <Card className="min-w-md">
-      <CardHeader>
-        <p className=" text-3xl ">Login</p>
-      </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-6">
-          <Field>
+          <FieldGroup>
             <div className="flex flex-col items-center gap-1 text-center">
               <h1 className="text-2xl font-bold">Login to your account</h1>
               <p className="text-sm text-balance text-muted-foreground">
