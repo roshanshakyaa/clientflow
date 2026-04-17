@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,6 +12,7 @@ import {
 import { Menu, MoveRight, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export const Header = () => {
   const navigationItems = [
@@ -22,25 +23,8 @@ export const Header = () => {
     },
     {
       title: "Product",
-      description: "Managing a small business today is already tough.",
-      items: [
-        {
-          title: "Reports",
-          href: "/reports",
-        },
-        {
-          title: "Statistics",
-          href: "/statistics",
-        },
-        {
-          title: "Dashboards",
-          href: "/dashboards",
-        },
-        {
-          title: "Recordings",
-          href: "/recordings",
-        },
-      ],
+      description: "",
+      href: "/pricing",
     },
     {
       title: "Company",
@@ -120,16 +104,27 @@ export const Header = () => {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div className="flex lg:justify-center">
-          <p className="font-semibold">TWBlocks</p>
+        <div className="flex lg:justify-center ">
+          <p className="font-semibold">CLIENT FLOW</p>
         </div>
-        <div className="flex justify-end w-full gap-4">
-          <Button variant="ghost" className="hidden md:inline">
-            Book a demo
-          </Button>
-          <div className="border-r hidden md:inline"></div>
-          <Button variant="outline">Sign in</Button>
-          <Button>Get started</Button>
+        <div className="flex justify-end flex-1 gap-4">
+          <Link
+            href={"/login"}
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+          >
+            Log in
+          </Link>
+          <Link
+            href={"/login"}
+            className={cn(
+              buttonVariants({
+                variant: "default",
+                size: "lg",
+              }),
+            )}
+          >
+            Get Started
+          </Link>
         </div>
         <div className="flex w-12 shrink lg:hidden items-end justify-end">
           <Button variant="ghost" onClick={() => setOpen(!isOpen)}>

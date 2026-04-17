@@ -8,15 +8,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-
-const LoginPage = () => {
+const SignUpPage = () => {
   return (
     <form className="flex flex-col gap-6 p-30 ">
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-bold">Create an account</h1>
           <p className="text-sm text-balance text-muted-foreground">
-            Enter your email below to login to your account
+            Enter your email below to register your account
           </p>
         </div>
         <Field>
@@ -26,17 +25,17 @@ const LoginPage = () => {
         <Field>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
           </div>
           <Input id="password" type="password" required />
         </Field>
         <Field>
-          <Button type="submit">Login</Button>
+          <div className="flex items-center">
+            <FieldLabel htmlFor="password">Confirm Password</FieldLabel>
+          </div>
+          <Input id="password" type="password" required />
+        </Field>
+        <Field>
+          <Button type="submit">Sign Up</Button>
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
@@ -50,9 +49,9 @@ const LoginPage = () => {
             Login with GitHub
           </Button>
           <FieldDescription className="text-center">
-            Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="underline underline-offset-4">
-              Sign up
+            Arleady have an account?{" "}
+            <Link href="/login" className="underline underline-offset-4">
+              Login
             </Link>
           </FieldDescription>
         </Field>
@@ -61,4 +60,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;

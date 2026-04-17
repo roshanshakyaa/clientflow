@@ -1,7 +1,40 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Albert_Sans,
+  Barlow,
+  Source_Code_Pro,
+} from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/web/ConvexClientProvider";
+import { cn } from "@/lib/utils";
+
+const sourceCodeProSourceCodePro = Source_Code_Pro({
+  subsets: [
+    "cyrillic",
+    "cyrillic-ext",
+    "greek",
+    "greek-ext",
+    "latin",
+    "latin-ext",
+    "vietnamese",
+  ],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-source-code-pro",
+});
+
+const barlowBarlow = Barlow({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-barlow",
+});
+
+const albertSansAlbertSans = Albert_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-albert-sans",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +59,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        albertSansAlbertSans.variable,
+        barlowBarlow.variable,
+        sourceCodeProSourceCodePro.variable,
+      )}
     >
       <body className="min-h-full flex flex-col">
         <ConvexClientProvider>{children}</ConvexClientProvider>
