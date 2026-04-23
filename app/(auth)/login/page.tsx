@@ -1,17 +1,59 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { loginSchema, LoginSchemaType } from "@/lib/schema/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "better-auth/api";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const LoginPage = () => {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const form = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  function onSubmit(data: LoginSchemaType) {
+    startTransition(async () => {
+      await authClient.signIn.email({
+        email: data.email,
+        password: data.password,
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Login Successful");
+            router.push("/dashboard");
+          },
+          onError: () => {
+            toast.error("Login failed");
+          },
+        },
+      });
+    });
+  }
+
   return (
-    <form className="flex flex-col gap-6 p-30 ">
+    <form
+      className="flex flex-col gap-6 p-12 md:p-16 lg:p-22 "
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -19,24 +61,50 @@ const LoginPage = () => {
             Enter your email below to login to your account
           </p>
         </div>
+        <Controller
+          name="email"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <Input
+                {...field}
+                id="email"
+                aria-invalid={fieldState.invalid}
+                placeholder="johndoe@gmail.com"
+                type="email"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="password"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Input
+                {...field}
+                id="password"
+                type="password"
+                placeholder="********"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
         <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </Field>
-        <Field>
-          <div className="flex items-center">
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
-          <Input id="password" type="password" required />
-        </Field>
-        <Field>
-          <Button type="submit">Login</Button>
+          <Button disabled={isPending} type="submit">
+            {isPending ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              <span>Login</span>
+            )}
+          </Button>
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>

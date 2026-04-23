@@ -13,6 +13,11 @@ import { Menu, MoveRight, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { useConvexAuth, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const navigationItems = [
@@ -49,7 +54,10 @@ export const Header = () => {
       ],
     },
   ];
+  const router = useRouter();
 
+  const user = useQuery(api.auth.getCurrentUser);
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const [isOpen, setOpen] = useState(false);
   return (
     <header className="w-full z-40 fixed top-0 left-0 bg-background">
@@ -108,23 +116,53 @@ export const Header = () => {
           <p className="font-semibold">CLIENT FLOW</p>
         </div>
         <div className="flex justify-end flex-1 gap-4">
-          <Link
-            href={"/login"}
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
-          >
-            Log in
-          </Link>
-          <Link
-            href={"/login"}
-            className={cn(
-              buttonVariants({
-                variant: "default",
-                size: "lg",
-              }),
-            )}
-          >
-            Get Started
-          </Link>
+          {isLoading ? null : isAuthenticated ? (
+            <>
+              <span className="flex items-center gap-2">
+                <span className="rounded-full bg-yellow-500 size-8"></span>
+                {/* {user?.name} */}
+              </span>
+              <Button
+                onClick={() =>
+                  authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        toast.success("Logged out successfully");
+                        router.push("/");
+                      },
+                      onError: (error) => {
+                        toast.error(error.error.message);
+                      },
+                    },
+                  })
+                }
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link
+                href={"/login"}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                )}
+              >
+                Log in
+              </Link>
+              <Link
+                href={"/login"}
+                className={cn(
+                  buttonVariants({
+                    variant: "default",
+                    size: "lg",
+                  }),
+                )}
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
         <div className="flex w-12 shrink lg:hidden items-end justify-end">
           <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
