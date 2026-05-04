@@ -56,8 +56,8 @@ export const Header = () => {
   ];
   const router = useRouter();
 
-  const user = useQuery(api.auth.getCurrentUser);
   const { isAuthenticated, isLoading } = useConvexAuth();
+  const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
   const [isOpen, setOpen] = useState(false);
   return (
     <header className="w-full z-40 fixed top-0 left-0 bg-background">
@@ -78,7 +78,7 @@ export const Header = () => {
                       <NavigationMenuTrigger className="font-medium text-sm">
                         {item.title}
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="!w-[450px] p-4">
+                      <NavigationMenuContent className="w-112.5! p-4">
                         <div className="flex flex-col lg:grid grid-cols-2 gap-4">
                           <div className="flex flex-col h-full justify-between">
                             <div className="flex flex-col">
