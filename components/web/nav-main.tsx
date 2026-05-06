@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
 
 export function NavMain({
   items,
@@ -19,13 +20,15 @@ export function NavMain({
     isActive?: boolean;
   }[];
 }) {
+  const pathname = usePathname();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Pages</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild isActive={item.isActive}>
+            <SidebarMenuButton asChild isActive={pathname == item.url}>
               <Link href={item.url}>
                 {item.icon}
                 <span>{item.title}</span>

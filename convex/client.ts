@@ -6,23 +6,24 @@ export const createClient = mutation({
   args: {
     name: v.string(),
     email: v.string(),
+    company: v.optional(v.string()),
+    phone: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await authComponent.safeGetAuthUser(ctx);
-    if (!user) {
-      throw new ConvexError("Not authenticated");
-    }
+    if (!user) throw new ConvexError("Not authenticated");
 
-    await ctx.db.insert("clients", {
+    return await ctx.db.insert("clients", {
       userId: user._id,
-      email: args.email,
       name: args.name,
+      email: args.email,
+      company: args.company,
+      phone: args.phone,
       outstandingBalance: 0,
       totalRevenue: 0,
     });
   },
 });
-
 export const getClient = query({
   args: {},
   handler: async (ctx) => {

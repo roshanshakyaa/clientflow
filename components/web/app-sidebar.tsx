@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/sidebar";
 import {
   GalleryVerticalEndIcon,
-  AudioLinesIcon,
-  TerminalIcon,
   TerminalSquareIcon,
   BotIcon,
   BookOpenIcon,
@@ -32,43 +30,35 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: <GalleryVerticalEndIcon />,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: <AudioLinesIcon />,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: <TerminalIcon />,
-      plan: "Free",
-    },
-  ],
+  team: {
+    name: "Client Flow",
+    logo: <GalleryVerticalEndIcon />,
+    plan: "FlowState",
+  },
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: <TerminalSquareIcon />,
-      isActive: true,
     },
     {
       title: "Clients",
-      url: "#",
+      url: "/dashboard/clients",
       icon: <BotIcon />,
     },
     {
       title: "Projects",
-      url: "#",
+      url: "/dashboard/projects",
+      icon: <BookOpenIcon />,
+    },
+    {
+      title: "Tasks",
+      url: "/dashboard/tasks",
       icon: <BookOpenIcon />,
     },
     {
       title: "Invoices",
-      url: "#",
+      url: "/dashboard/invoices",
       icon: <Settings2Icon />,
     },
   ],
@@ -95,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={data.team} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

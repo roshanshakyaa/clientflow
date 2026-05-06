@@ -7,19 +7,19 @@ export const createProject = mutation({
     title: v.string(),
     clientId: v.id("clients"),
     deadline: v.string(),
+    description: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await authComponent.safeGetAuthUser(ctx);
-    if (!user) {
-      throw new ConvexError("Not authenticated");
-    }
+    if (!user) throw new ConvexError("Not authenticated");
 
-    await ctx.db.insert("projects", {
+    return await ctx.db.insert("projects", {
       userId: user._id,
       clientId: args.clientId,
       title: args.title,
       status: "active",
       deadline: args.deadline,
+      description: args.description,
     });
   },
 });
@@ -28,16 +28,12 @@ export const getProjects = query({
   args: {},
   handler: async (ctx) => {
     const user = await authComponent.safeGetAuthUser(ctx);
-    if (!user) {
-      throw new ConvexError("Not authenticated");
-    }
+    if (!user) return [];
 
-    const projects = await ctx.db
+    return await ctx.db
       .query("projects")
-      .withIndex("by_client")
+      .withIndex("by_user", (q) => q.eq("userId", user._id)) // Secure filtering
       .order("desc")
       .collect();
-
-    return projects;
   },
 });
