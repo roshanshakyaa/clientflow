@@ -7,6 +7,7 @@ export const createProject = mutation({
     title: v.string(),
     clientId: v.id("clients"),
     deadline: v.string(),
+    budget: v.number(),
     description: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -19,6 +20,7 @@ export const createProject = mutation({
       title: args.title,
       status: "active",
       deadline: args.deadline,
+      budget: args.budget,
       description: args.description,
     });
   },

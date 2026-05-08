@@ -189,7 +189,12 @@ function ProfileForm({
               <FieldLabel className="text-xs text-muted-foreground mb-1">
                 Phone (Optional)
               </FieldLabel>
-              <Input {...field} placeholder="+977..." className="h-8 text-sm" />
+              <Input
+                {...field}
+                placeholder="+977..."
+                type=""
+                className="h-8 text-sm"
+              />
             </Field>
           )}
         />
