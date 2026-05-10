@@ -57,7 +57,6 @@ export const Header = () => {
   const router = useRouter();
 
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
   const [isOpen, setOpen] = useState(false);
   return (
     <header className="w-full z-40 fixed top-0 left-0 bg-background">
@@ -118,10 +117,7 @@ export const Header = () => {
         <div className="flex justify-end flex-1 gap-4">
           {isLoading ? null : isAuthenticated ? (
             <>
-              <span className="flex items-center gap-2">
-                <span className="rounded-full bg-yellow-500 size-8"></span>
-                {/* {user?.name} */}
-              </span>
+              <Link href={"/dashboard"}>Dashboard</Link>
               <Button
                 onClick={() =>
                   authClient.signOut({

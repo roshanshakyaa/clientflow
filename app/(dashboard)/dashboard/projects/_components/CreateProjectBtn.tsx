@@ -98,30 +98,35 @@ function ProjectForm({
   setOpen?: (open: boolean) => void;
 }) {
   const [isPending, startTransition] = React.useTransition();
-
-  // 1. Fetch clients for the dropdown
   const clients = useQuery(api.client.getClient);
+  const createProject = useMutation(api.project.createProject);
 
   const form = useForm<projectSchemaType>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: "",
       clientId: "",
-      deadline: "",
       description: "",
+      status: "active", // Reasonable default
+      priority: "medium", // Reasonable default
+      startDate: new Date().toISOString().split("T")[0], // Defaults to today
+      deadline: "",
       budget: undefined,
+      hourlyRate: undefined,
     },
   });
-
-  const createProject = useMutation(api.project.createProject);
 
   function onSubmit(data: projectSchemaType) {
     startTransition(async () => {
       try {
-        // data.clientId will be the Convex ID string
         await createProject({
           ...data,
           clientId: data.clientId as Id<"clients">,
+          // CRITICAL: Convert strings to timestamps for Convex
+          startDate: new Date(data.startDate).getTime(),
+          deadline: new Date(data.deadline).getTime(),
+          budget: data.budget,
+          hourlyRate: data.hourlyRate,
         });
         form.reset();
         setOpen?.(false);
@@ -137,60 +142,121 @@ function ProjectForm({
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <FieldGroup className="flex flex-col gap-4">
-        {/* Project Title */}
-        <Controller
-          name="title"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
-                Project Title
-              </FieldLabel>
-              <Input
-                {...field}
-                placeholder="E-commerce Redesign"
-                className="h-9 text-sm"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        {/* Client Selection Dropdown */}
-        <Controller
-          name="clientId"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
-                Link to Client
-              </FieldLabel>
-              <select
-                {...field}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="" disabled>
-                  Select a client
-                </option>
-                {clients?.map((client) => (
-                  <option key={client._id} value={client._id}>
-                    {client.name} {client.company ? `(${client.company})` : ""}
-                  </option>
-                ))}
-              </select>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
+        {/* Row 1: Title & Client */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Deadline */}
+          <Controller
+            name="title"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Project Title
+                </FieldLabel>
+                <Input
+                  {...field}
+                  placeholder="Project name..."
+                  className="h-9 text-sm"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="clientId"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Client
+                </FieldLabel>
+                <select
+                  {...field}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="" disabled>
+                    Select client
+                  </option>
+                  {clients?.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </div>
+
+        {/* Row 2: Status & Priority */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Controller
+            name="status"
+            control={form.control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Status
+                </FieldLabel>
+                <select
+                  {...field}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                >
+                  <option value="proposal">Proposal</option>
+                  <option value="active">Active</option>
+                  <option value="on-hold">On Hold</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="priority"
+            control={form.control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Priority
+                </FieldLabel>
+                <select
+                  {...field}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </Field>
+            )}
+          />
+        </div>
+
+        {/* Row 3: Dates */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Controller
+            name="startDate"
+            control={form.control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Start Date
+                </FieldLabel>
+                <Input {...field} type="date" className="h-9 text-sm" />
+              </Field>
+            )}
+          />
           <Controller
             name="deadline"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel className="text-xs text-muted-foreground mb-1">
+                <FieldLabel className="text-xs text-muted-foreground">
                   Deadline
                 </FieldLabel>
                 <Input {...field} type="date" className="h-9 text-sm" />
@@ -200,32 +266,63 @@ function ProjectForm({
               </Field>
             )}
           />
+        </div>
 
+        {/* Row 4: Budget & Hourly */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Budget Field */}
           <Controller
             name="budget"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel className="text-xs text-muted-foreground mb-1">
-                  Budget (Optional)
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Budget ($)
                 </FieldLabel>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">
-                    $
-                  </span>
-                  <Input
-                    type="number"
-                    placeholder="0.00"
-                    className="h-9 text-sm pl-6"
-                    value={field.value ?? ""}
-                    onChange={(e) => {
-                      const value = e.target.value;
+                <Input
+                  {...field}
+                  type="number"
+                  min="0" // Native browser restriction
+                  placeholder="0.00"
+                  className="h-9 text-sm"
+                  value={field.value ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    field.onChange(
+                      val === "" ? undefined : Math.max(0, Number(val)),
+                    ); // Logic fallback
+                  }}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-                      field.onChange(value === "" ? undefined : Number(value));
-                    }}
-                  />
-                </div>
+          {/* Hourly Rate Field */}
+          <Controller
+            name="hourlyRate"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-xs text-muted-foreground">
+                  Hourly Rate ($)
+                </FieldLabel>
+                <Input
+                  {...field}
+                  type="number"
+                  min="0" // Native browser restriction
+                  placeholder="0.00"
+                  className="h-9 text-sm"
+                  value={field.value ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    field.onChange(
+                      val === "" ? undefined : Math.max(0, Number(val)),
+                    );
+                  }}
+                />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -234,18 +331,18 @@ function ProjectForm({
           />
         </div>
 
-        {/* Description Field */}
+        {/* Description */}
         <Controller
           name="description"
           control={form.control}
           render={({ field }) => (
             <Field>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
+              <FieldLabel className="text-xs text-muted-foreground">
                 Project Notes
               </FieldLabel>
               <Input
                 {...field}
-                placeholder="Brief overview of the project scope..."
+                placeholder="Scope details..."
                 className="h-9 text-sm"
               />
             </Field>
@@ -260,13 +357,7 @@ function ProjectForm({
           disabled={isPending || !clients}
           className="min-w-30"
         >
-          {isPending ? (
-            <>
-              <Loader2 className="size-3.5 animate-spin mr-2" /> Creating...
-            </>
-          ) : (
-            "Launch Project"
-          )}
+          {isPending ? "Launching..." : "Launch Project"}
         </Button>
       </div>
     </form>

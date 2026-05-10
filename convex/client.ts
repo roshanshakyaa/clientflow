@@ -21,6 +21,7 @@ export const createClient = mutation({
       phone: args.phone,
       outstandingBalance: 0,
       totalRevenue: 0,
+      lastContacted: Date.now(),
     });
   },
 });

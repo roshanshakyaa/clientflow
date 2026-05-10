@@ -23,16 +23,17 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
       },
     },
 
-    plugins: [
-      // The Convex plugin is required for Convex compatibility
-      convex({ authConfig }),
-    ],
+    plugins: [convex({ authConfig })],
   });
 };
 
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    return authComponent.getAuthUser(ctx);
+    try {
+      return authComponent.getAuthUser(ctx);
+    } catch {
+      return null;
+    }
   },
 });

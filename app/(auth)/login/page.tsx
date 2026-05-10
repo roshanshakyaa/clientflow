@@ -41,8 +41,8 @@ const LoginPage = () => {
             toast.success("Login Successful");
             router.push("/dashboard");
           },
-          onError: () => {
-            toast.error("Login failed");
+          onError: (e) => {
+            toast.error(e.error.message);
           },
         },
       });

@@ -9,6 +9,7 @@ import {
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/web/ConvexClientProvider";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const sourceCodeProSourceCodePro = Source_Code_Pro({
   subsets: [
@@ -70,7 +71,10 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          {children}
+          <Toaster />
+        </ConvexClientProvider>
       </body>
     </html>
   );

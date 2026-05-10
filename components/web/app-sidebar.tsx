@@ -11,6 +11,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import {
@@ -23,6 +26,7 @@ import {
   PieChartIcon,
   MapIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 const data = {
   user: {
@@ -85,14 +89,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.team} />
+        <NavUser user={data.user} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href={"/settings"}>
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

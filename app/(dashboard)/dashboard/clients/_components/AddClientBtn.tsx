@@ -36,6 +36,7 @@ import {
 import { Loader2, Plus } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { PhoneInput } from "./phone-input";
 
 export function AddClientBtn() {
   const [open, setOpen] = React.useState(false);
@@ -96,7 +97,6 @@ function ProfileForm({
   setOpen,
 }: React.ComponentProps<"form"> & { setOpen?: (open: boolean) => void }) {
   const [isPending, startTransition] = React.useTransition();
-
   const form = useForm<clientSchemaType>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
@@ -116,104 +116,104 @@ function ProfileForm({
         form.reset();
         setOpen?.(false);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to create client:", error);
       }
     });
   }
 
   return (
     <form
-      className={cn("flex flex-col gap-3", className)}
+      className={cn("flex flex-col gap-4", className)}
       onSubmit={form.handleSubmit(onSubmit)}
     >
-      <FieldGroup className="flex flex-col gap-3">
+      <FieldGroup className="flex flex-col gap-4">
+        {/* Name Field */}
         <Controller
           name="name"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
-                Name
+              <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                Full Name
               </FieldLabel>
               <Input
                 {...field}
-                placeholder="Johny Harris"
-                className="h-8 text-sm"
+                placeholder="e.g. Roshan Shakya"
+                className="h-9"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
 
+        {/* Email Field */}
         <Controller
           name="email"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
-                Email
+              <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                Email Address
               </FieldLabel>
               <Input
                 {...field}
-                placeholder="john@gmail.com"
                 type="email"
-                className="h-8 text-sm"
+                placeholder="client@example.com"
+                className="h-9"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
 
-        <Controller
-          name="company"
-          control={form.control}
-          render={({ field }) => (
-            <Field>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
-                Company (Optional)
-              </FieldLabel>
-              <Input
-                {...field}
-                placeholder="Acme Corp"
-                className="h-8 text-sm"
-              />
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="phone"
-          control={form.control}
-          render={({ field }) => (
-            <Field>
-              <FieldLabel className="text-xs text-muted-foreground mb-1">
-                Phone (Optional)
-              </FieldLabel>
-              <Input
-                {...field}
-                placeholder="+977..."
-                type=""
-                className="h-8 text-sm"
-              />
-            </Field>
-          )}
-        />
+        {/* Grid for Company and Phone */}
+        <div className="grid grid-cols-2 gap-4">
+          <Controller
+            name="company"
+            control={form.control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Company
+                </FieldLabel>
+                <Input {...field} placeholder="Optional" className="h-9" />
+              </Field>
+            )}
+          />
+          <Controller
+            name="phone"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Phone
+                </FieldLabel>
+                <PhoneInput
+                  {...field}
+                  defaultCountry="NP"
+                  placeholder="Optional"
+                  className="h-9"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </div>
       </FieldGroup>
 
-      <div className="flex justify-end pt-1">
+      <div className="flex justify-end pt-2">
         <Button
           type="submit"
           size="sm"
           disabled={isPending}
-          className="min-w-[110px] gap-1.5"
+          className="min-w-[120px]"
         >
           {isPending ? (
-            <>
-              <Loader2 className="size-3.5 animate-spin" />
-              Creating...
-            </>
+            <Loader2 className="size-4 animate-spin" />
           ) : (
-            "Create Client"
+            "Add Client"
           )}
         </Button>
       </div>
