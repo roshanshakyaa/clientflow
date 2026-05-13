@@ -27,6 +27,9 @@ import {
   MapIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { api } from "@/convex/_generated/api";
+import { Preloaded } from "convex/react";
 
 const data = {
   user: {
@@ -85,11 +88,17 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  preloadedUser: Preloaded<typeof api.auth.getCurrentUser>;
+}
+
+export function AppSidebar({ preloadedUser, ...props }: AppSidebarProps) {
+  const user = api.auth.getCurrentUser;
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavUser user={data.user} />
+        <NavUser preloadedUserQuery={preloadedUser} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

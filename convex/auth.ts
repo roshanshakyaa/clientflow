@@ -27,13 +27,16 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
   });
 };
 
+// convex/auth.ts
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    try {
-      return authComponent.getAuthUser(ctx);
-    } catch {
+    const user = await authComponent.safeGetAuthUser(ctx);
+
+    if (!user) {
       return null;
     }
+
+    return user;
   },
 });

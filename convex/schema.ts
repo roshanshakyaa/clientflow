@@ -65,11 +65,8 @@ export default defineSchema({
     priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
 
     dueDate: v.optional(v.number()),
-    estimatedMinutes: v.optional(v.number()),
-    actualMinutes: v.number(),
-
     order: v.number(),
   })
     .index("by_project", ["projectId"])
-    .index("by_user_status", ["userId", "status"]),
+    .index("by_project_status", ["projectId", "status"]),
 });
