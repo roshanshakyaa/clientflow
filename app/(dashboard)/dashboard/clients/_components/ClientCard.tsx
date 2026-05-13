@@ -2,6 +2,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import React from "react";
 import { BarPopover } from "./BarPopover";
 import { Mail } from "lucide-react";
+import Link from "next/link";
 
 interface iAppProps {
   _id: Id<"clients">;
@@ -19,7 +20,8 @@ interface iAppProps {
 
 const ClientCard = ({ client }: { client: iAppProps }) => {
   return (
-    <div
+    <Link
+      href={`/dashboard/clients/${client._id}`}
       key={client._id}
       className="group relative bg-card border rounded-xl p-5 transition-all hover:shadow-lg "
     >
@@ -60,7 +62,7 @@ const ClientCard = ({ client }: { client: iAppProps }) => {
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

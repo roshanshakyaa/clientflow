@@ -41,3 +41,17 @@ export const getClient = query({
     return usersClient;
   },
 });
+
+export const getClientById = query({
+  args: { clientId: v.id("clients") },
+  handler: async (ctx, args) => {
+    const user = await authComponent.safeGetAuthUser(ctx);
+    if (!user) return null;
+
+    const client = await ctx.db.get(args.clientId);
+
+    if (!client || client.userId !== user._id) return null;
+
+    return client;
+  },
+});

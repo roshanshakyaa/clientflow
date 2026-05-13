@@ -42,7 +42,7 @@ export function CreateProjectBtn() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const TriggerButton = (
-    <Button variant="default" size="sm" className="gap-1.5">
+    <Button variant="default" size="lg" className="gap-1.5">
       <Plus className="size-3.5" />
       Add Project
     </Button>
@@ -80,7 +80,7 @@ export function CreateProjectBtn() {
         <ProjectForm className="px-4" setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="lg">
               Cancel
             </Button>
           </DrawerClose>

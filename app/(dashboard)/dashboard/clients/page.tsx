@@ -9,7 +9,7 @@ const ClientsPage = () => {
   const clients = useQuery(api.client.getClient);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-6  space-y-8">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
         <div>

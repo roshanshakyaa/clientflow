@@ -46,7 +46,7 @@ export function AddClientBtn() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="default" size="sm" className="gap-1.5">
+          <Button variant="default" size="lg" className="gap-1.5">
             <Plus className="size-3.5" />
             Add Client
           </Button>

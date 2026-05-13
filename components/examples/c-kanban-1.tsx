@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ComponentProps, useState } from "react"
-import { Badge } from "@/components/reui/badge"
+import { ComponentProps, useState } from "react";
+import { Badge } from "@/components/reui/badge";
 import {
   Kanban,
   KanbanBoard,
@@ -11,25 +11,21 @@ import {
   KanbanItem,
   KanbanItemHandle,
   KanbanOverlay,
-} from "@/components/reui/kanban"
+} from "@/components/reui/kanban";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { GripVerticalIcon } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { GripVerticalIcon } from "lucide-react";
 
 interface Task {
-  id: string
-  title: string
-  priority: "low" | "medium" | "high"
-  description?: string
-  assignee?: string
-  assigneeAvatar?: string
-  dueDate?: string
+  id: string;
+  title: string;
+  priority: "low" | "medium" | "high";
+  description?: string;
+  assignee?: string;
+  assigneeAvatar?: string;
+  dueDate?: string;
 }
 
 const COLUMN_TITLES: Record<string, string> = {
@@ -37,15 +33,15 @@ const COLUMN_TITLES: Record<string, string> = {
   inProgress: "In Progress",
   review: "Review",
   done: "Done",
-}
+};
 
 interface TaskCardProps extends Omit<
   ComponentProps<typeof KanbanItem>,
   "value" | "children"
 > {
-  task: Task
-  asHandle?: boolean
-  isOverlay?: boolean
+  task: Task;
+  asHandle?: boolean;
+  isOverlay?: boolean;
 }
 
 function TaskCard({ task, asHandle, isOverlay, ...props }: TaskCardProps) {
@@ -85,7 +81,7 @@ function TaskCard({ task, asHandle, isOverlay, ...props }: TaskCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 
   return (
     <KanbanItem value={task.id} {...props}>
@@ -95,15 +91,15 @@ function TaskCard({ task, asHandle, isOverlay, ...props }: TaskCardProps) {
         cardContent
       )}
     </KanbanItem>
-  )
+  );
 }
 
 interface TaskColumnProps extends Omit<
   ComponentProps<typeof KanbanColumn>,
   "children"
 > {
-  tasks: Task[]
-  isOverlay?: boolean
+  tasks: Task[];
+  isOverlay?: boolean;
 }
 
 function TaskColumn({ value, tasks, isOverlay, ...props }: TaskColumnProps) {
@@ -119,8 +115,7 @@ function TaskColumn({ value, tasks, isOverlay, ...props }: TaskColumnProps) {
           </div>
           <KanbanColumnHandle asChild>
             <Button size="icon-xs" variant="ghost">
-              <GripVerticalIcon
-              />
+              <GripVerticalIcon />
             </Button>
           </KanbanColumnHandle>
         </CardHeader>
@@ -138,7 +133,7 @@ function TaskColumn({ value, tasks, isOverlay, ...props }: TaskColumnProps) {
         </CardContent>
       </Card>
     </KanbanColumn>
-  )
+  );
 }
 
 export function Pattern() {
@@ -212,7 +207,7 @@ export function Pattern() {
         dueDate: "Sep 20, 2025",
       },
     ],
-  })
+  });
 
   return (
     <Kanban
@@ -227,5 +222,5 @@ export function Pattern() {
       </KanbanBoard>
       <KanbanOverlay className="bg-muted/10 rounded-md border-2 border-dashed" />
     </Kanban>
-  )
+  );
 }
