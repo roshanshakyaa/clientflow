@@ -43,8 +43,10 @@ export default defineSchema({
 
     totalTasks: v.number(),
     completedTasks: v.number(),
+    order: v.number(),
   })
     .index("by_user", ["userId"])
+    .index("by_status_order", ["userId", "status", "order"])
     .index("by_client", ["clientId"])
     .index("by_status", ["userId", "status"])
     .index("by_deadline", ["userId", "deadline"]),

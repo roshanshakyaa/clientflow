@@ -65,9 +65,17 @@ const ProjectsPage = () => {
     });
 
     Object.entries(typed).forEach(([newStatus, items]) => {
-      items.forEach((item) => {
-        if (oldStatusMap.get(item._id) !== newStatus) {
-          updateStatus({ id: item._id, status: newStatus as StatusKey });
+      items.forEach((item, index) => {
+        const newOrder = (index + 1) * 1000;
+        const statusChanged = oldStatusMap.get(item._id) !== newStatus;
+        const orderChanged = item.order !== newOrder;
+
+        if (statusChanged || orderChanged) {
+          updateStatus({
+            id: item._id,
+            status: newStatus as StatusKey,
+            order: newOrder,
+          });
         }
       });
     });
