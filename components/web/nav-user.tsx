@@ -21,6 +21,7 @@ import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { Preloaded } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 export function NavUser({
   preloadedUserQuery,
 }: {
@@ -37,6 +38,7 @@ export function NavUser({
     return name.slice(0, 2).toUpperCase();
   };
 
+  const router = useRouter();
   const userInitials = getInitials(user?.name);
   return (
     <SidebarMenu>
@@ -99,7 +101,15 @@ export function NavUser({
 
             <DropdownMenuItem
               className="text-destructive focus:text-destructive cursor-pointer"
-              onClick={() => authClient.signOut()}
+              onClick={() =>
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      router.push("/");
+                    },
+                  },
+                })
+              }
             >
               <LogOutIcon className="mr-2 size-4" />
               Log out

@@ -29,7 +29,7 @@ import {
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { api } from "@/convex/_generated/api";
-import { Preloaded } from "convex/react";
+import { Preloaded, useQuery } from "convex/react";
 
 const data = {
   user: {
@@ -58,16 +58,6 @@ const data = {
       url: "/dashboard/projects",
       icon: <BookOpenIcon />,
     },
-    {
-      title: "Tasks",
-      url: "/dashboard/tasks",
-      icon: <BookOpenIcon />,
-    },
-    {
-      title: "Invoices",
-      url: "/dashboard/invoices",
-      icon: <Settings2Icon />,
-    },
   ],
   projects: [
     {
@@ -93,7 +83,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ preloadedUser, ...props }: AppSidebarProps) {
-  const user = api.auth.getCurrentUser;
+  const projects = useQuery(api.project.getRecentProjects);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -104,17 +94,7 @@ export function AppSidebar({ preloadedUser, ...props }: AppSidebarProps) {
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href={"/settings"}>
-                <span>Settings</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   );

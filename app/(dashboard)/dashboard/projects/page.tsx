@@ -2,10 +2,10 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useState, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
+import React from "react";
 import { MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Id } from "@/convex/_generated/dataModel";
 import { Doc } from "@/convex/_generated/dataModel";
 
 import {
@@ -39,11 +39,12 @@ const EMPTY_BOARD: BoardData = {
 };
 
 const ProjectsPage = () => {
-  const [boardData, setBoardData] = useState<BoardData>(EMPTY_BOARD);
   const projects = useQuery(api.project.getProjects);
   const updateStatus = useMutation(api.project.updateProjectStatus);
-  useEffect(() => {
-    if (!projects) return;
+  const [localBoardData, setLocalBoardData] = useState<BoardData | null>(null);
+
+  const serverBoardData = useMemo<BoardData>(() => {
+    if (!projects) return EMPTY_BOARD;
     const grouped: BoardData = {
       proposal: [],
       active: [],
@@ -54,23 +55,32 @@ const ProjectsPage = () => {
       const status = project.status as StatusKey;
       if (grouped[status]) grouped[status].push(project);
     }
-    setBoardData(grouped);
+    return grouped;
   }, [projects]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLocalBoardData(null);
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, [projects]);
+  const boardData = localBoardData ?? serverBoardData;
+
   const handleDragEnd = (newBoardData: Record<string, Doc<"projects">[]>) => {
     const typed = newBoardData as BoardData;
 
-    const oldStatusMap = new Map<string, string>();
+    const oldStatusMap = new Map<string, { status: string; order: number }>();
     Object.entries(boardData).forEach(([status, items]) => {
-      items.forEach((item) => oldStatusMap.set(item._id, status));
+      items.forEach((item) =>
+        oldStatusMap.set(item._id, { status, order: item.order }),
+      );
     });
 
     Object.entries(typed).forEach(([newStatus, items]) => {
       items.forEach((item, index) => {
         const newOrder = (index + 1) * 1000;
-        const statusChanged = oldStatusMap.get(item._id) !== newStatus;
-        const orderChanged = item.order !== newOrder;
-
-        if (statusChanged || orderChanged) {
+        const old = oldStatusMap.get(item._id);
+        if (old?.status !== newStatus || old?.order !== newOrder) {
           updateStatus({
             id: item._id,
             status: newStatus as StatusKey,
@@ -80,8 +90,9 @@ const ProjectsPage = () => {
       });
     });
 
-    setBoardData(typed);
+    setLocalBoardData(typed);
   };
+
   return (
     <div className="p-6 h-[calc(100vh-64px)] flex flex-col space-y-6 overflow-hidden">
       <div className="flex items-center justify-between">

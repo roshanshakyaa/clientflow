@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import React, { ReactNode } from "react";
 import { preloadAuthQuery } from "@/lib/auth-server";
 import { api } from "@/convex/_generated/api";
+import { Breadcrumbs } from "@/components/web/breadcrumbs";
 
 const DashboardLayout = async ({ children }: { children: ReactNode }) => {
   const preloadedUser = await preloadAuthQuery(api.auth.getCurrentUser);
@@ -12,7 +13,12 @@ const DashboardLayout = async ({ children }: { children: ReactNode }) => {
       <TooltipProvider>
         <SidebarProvider>
           <AppSidebar preloadedUser={preloadedUser} />
-          <main className="w-full p-6">{children}</main>
+          <div className="flex flex-col w-full min-h-screen">
+            <header className="h-12 border-b flex items-center px-6 shrink-0">
+              <Breadcrumbs />
+            </header>
+            <main className="flex-1 p-6">{children}</main>
+          </div>
         </SidebarProvider>
       </TooltipProvider>
     </>

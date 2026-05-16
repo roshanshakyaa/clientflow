@@ -24,7 +24,7 @@ export default defineSchema({
     clientId: v.id("clients"),
     title: v.string(),
     description: v.optional(v.string()),
-
+    slug: v.string(),
     status: v.union(
       v.literal("proposal"),
       v.literal("active"),
@@ -49,6 +49,7 @@ export default defineSchema({
     .index("by_status_order", ["userId", "status", "order"])
     .index("by_client", ["clientId"])
     .index("by_status", ["userId", "status"])
+    .index("by_slug", ["userId", "slug"])
     .index("by_deadline", ["userId", "deadline"]),
 
   tasks: defineTable({

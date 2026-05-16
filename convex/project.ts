@@ -86,6 +86,7 @@ export const updateProjectStatus = mutation({
     if (!project) throw new ConvexError("Project not found");
     if (project.userId !== user._id) throw new ConvexError("Unauthorized");
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const patchData: any = { status: args.status };
 
     // If a specific order is passed (from drag-and-drop), update it
@@ -107,5 +108,32 @@ export const getProjectsOfClient = query({
       .query("projects")
       .withIndex("by_client", (q) => q.eq("clientId", args.clientId))
       .collect();
+  },
+});
+export const getProject = query({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, args) => {
+    const user = await authComponent.safeGetAuthUser(ctx);
+    if (!user) return null;
+
+    const project = await ctx.db.get(args.projectId);
+    if (!project || project.userId !== user._id) return null;
+
+    const client = await ctx.db.get(project.clientId);
+
+    return { ...project, client };
+  },
+});
+
+export const getRecentProjects = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await authComponent.safeGetAuthUser(ctx);
+    if (!user) return null;
+
+    return await ctx.db
+      .query("projects")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .take(5);
   },
 });
