@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
+import { uniqueSlug } from "./lib/slug";
 
 export const createProject = mutation({
   args: {
@@ -34,6 +35,8 @@ export const createProject = mutation({
 
     const newOrder = lastProject ? lastProject.order + 1000 : 1000;
 
+    const slug = await uniqueSlug(ctx, user._id, args.title);
+
     return await ctx.db.insert("projects", {
       userId: user._id,
       clientId: args.clientId,
@@ -42,10 +45,11 @@ export const createProject = mutation({
       status: args.status,
       priority: args.priority,
       startDate: args.startDate,
+      slug,
       deadline: args.deadline,
       budget: args.budget,
       hourlyRate: args.hourlyRate,
-      order: newOrder, // Added order field
+      order: newOrder,
       totalTasks: 0,
       completedTasks: 0,
     });
@@ -111,20 +115,24 @@ export const getProjectsOfClient = query({
   },
 });
 export const getProject = query({
-  args: { projectId: v.id("projects") },
+  args: { slug: v.string() },
   handler: async (ctx, args) => {
     const user = await authComponent.safeGetAuthUser(ctx);
     if (!user) return null;
 
-    const project = await ctx.db.get(args.projectId);
-    if (!project || project.userId !== user._id) return null;
+    const project = await ctx.db
+      .query("projects")
+      .withIndex("by_slug", (q) =>
+        q.eq("userId", user._id).eq("slug", args.slug),
+      )
+      .first();
+
+    if (!project) return null;
 
     const client = await ctx.db.get(project.clientId);
-
     return { ...project, client };
   },
 });
-
 export const getRecentProjects = query({
   args: {},
   handler: async (ctx) => {

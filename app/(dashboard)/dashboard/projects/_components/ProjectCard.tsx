@@ -1,17 +1,18 @@
+import { Doc } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
 import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 
-export function ProjectCard({ project }: { project: any }) {
+export function ProjectCard({ project }: { project: Doc<"projects"> }) {
   const progress =
     project.totalTasks > 0
       ? (project.completedTasks / project.totalTasks) * 100
       : 0;
 
   return (
-    <Link href={`/dashboard/projects/${project._id}`}>
+    <Link href={`/dashboard/projects/${project.slug}`}>
       <div className="group bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing">
         <div className="flex flex-col gap-3">
           <div className="flex justify-between items-start">

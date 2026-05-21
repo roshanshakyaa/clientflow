@@ -33,7 +33,6 @@ export function NavProjects({
   }[];
 }) {
   const { isMobile } = useSidebar();
-
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Recent Projects</SidebarGroupLabel>

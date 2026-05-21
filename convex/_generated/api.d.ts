@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as client from "../client.js";
 import type * as http from "../http.js";
+import type * as lib_slug from "../lib/slug.js";
 import type * as project from "../project.js";
 import type * as tasks from "../tasks.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   client: typeof client;
   http: typeof http;
+  "lib/slug": typeof lib_slug;
   project: typeof project;
   tasks: typeof tasks;
 }>;

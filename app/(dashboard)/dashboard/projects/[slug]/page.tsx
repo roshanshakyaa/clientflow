@@ -18,7 +18,6 @@ import {
   KanbanItemHandle,
   KanbanOverlay,
 } from "@/components/reui/kanban";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TaskCard } from "../_components/TaskCard";
 import { CreateTaskBtn } from "../_components/CreateTaskBtn";
@@ -56,13 +55,16 @@ const PRIORITY_STYLES: Record<string, string> = {
 };
 
 interface Props {
-  params: Promise<{ projectId: Id<"projects"> }>;
+  params: Promise<{ slug: string }>;
 }
 
 const ProjectPage = ({ params }: Props) => {
-  const { projectId } = use(params);
-  const project = useQuery(api.project.getProject, { projectId });
-  const tasks = useQuery(api.tasks.getTasks, { projectId });
+  const { slug } = use(params);
+  const project = useQuery(api.project.getProject, { slug });
+  const tasks = useQuery(
+    api.tasks.getTasks,
+    project?._id ? { projectId: project._id } : "skip",
+  );
   const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
 
   const [localBoardData, setLocalBoardData] = useState<BoardData | null>(null);
@@ -217,7 +219,7 @@ const ProjectPage = ({ params }: Props) => {
                 <span>{progress}%</span>
               </div>
             )}
-            <CreateTaskBtn projectId={projectId} />
+            <CreateTaskBtn projectId={project._id} />
           </div>
         </div>
 
@@ -237,13 +239,13 @@ const ProjectPage = ({ params }: Props) => {
         onValueChange={handleDragEnd}
         getItemValue={(item: Doc<"tasks">) => item._id}
       >
-        <KanbanBoard className="flex gap-6 h-full overflow-x-auto pb-8 scrollbar-hide">
+        <KanbanBoard className="flex gap-6 h-full overflow-x-auto pb-8 scrollbar-hide ">
           {TASK_COLUMNS.map((col) => (
             <KanbanColumn
               key={col.id}
               value={col.id}
               className={cn(
-                "min-w-[280px] max-w-[320px] flex flex-col rounded-2xl p-4 border border-slate-100",
+                "min-w-[280px] max-w-[320px] flex flex-col rounded-2xl p-4 border flex-1 border-slate-100",
                 col.color,
               )}
             >
